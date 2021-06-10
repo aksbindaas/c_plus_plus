@@ -1,41 +1,31 @@
 #include <iostream>
-#include <string>
 #include <memory>
-class BigObj {
-private:
-	std::string name;
+#include <cassert>
+class BaseClass {
 public:
-	BigObj(std::string name) {
-		this->name = name;
+	virtual void Publish() {
+		std::cout<<"BaseClass::Publish\n";
 	}
-
-	void PrintName() {
-		std::cout<<name<<std::endl;
-	}
-
-	~BigObj() {
-		std::cout<<"~BigObj"<<std::endl;
-	}
+	BaseClass() { std::cout<<"BaseClass\n"; }
+	virtual ~BaseClass()  { std::cout<<"~BaseClass\n"; }
 };
 
 int main() {
-	std::cout<<"Unique Ptr program started"<<std::endl;
-	{
-		BigObj *obj = new BigObj("Big Object Normal pointer");
-		obj->PrintName();
+	std::cout<<"============== Classical pointer Demo ============="<<std::endl; {
+		BaseClass *obj = new BaseClass;
 		delete obj;
 	}
-	{
-		// creating object using make_unique
-		std::unique_ptr<BigObj> obj = std::make_unique<BigObj>("Big Object Unique ptr");
-		obj->PrintName();
-		obj.get()->PrintName();
+
+	std::cout<<"============== Unique Ptr creation demo ==============\n"; {
+		std::unique_ptr<BaseClass> obj = std::make_unique<BaseClass>();
+		std::unique_ptr<BaseClass> obj1 (new BaseClass);
 	}
-	{
-		// creating object using object creation
-		std::unique_ptr<BigObj> obj(new BigObj("Big Object Unique ptr"));
-		obj->PrintName();
-		obj.get()->PrintName();
+
+	std::cout<<"============== Unique Ptr ownership demo ==============\n"; {
+		std::unique_ptr<BaseClass> obj = std::make_unique<BaseClass>();
+		std::unique_ptr<BaseClass> obj2 = std::move(obj);
+		assert(obj == nullptr);
+		obj2->Publish();
 	}
 	return 0;
 }
