@@ -2,7 +2,7 @@
 #include<stdio.h>
 #include <stdlib.h>
 #include<unistd.h>
-#define QUEUE_SIZE 100
+#define QUEUE_SIZE 1000
 
 
 typedef void *(*routine)(void *);
