@@ -12,13 +12,17 @@ private:
     int port;
 
 public:
-    ServerSocketInfo(char *ip, int port);
+    ServerSocketInfo(char *ip, int port, char *hostEndPoint, short hostEndPointPort);
     int getListenFD();
     int write(char *buff, int len);
+
+    char *hostEndPoint;
+    short hostEndPointPort;
 };
 
 class SocketInfo {
 public:  
+  ServerSocketInfo *serverCtx;
   int fd;
   char buff[1024];
   char parsedLen;

@@ -33,10 +33,11 @@ int socket_connect(const char *host, in_port_t port){
 }
 
 
-SocketInfo::SocketInfo(ServerSocketInfo *server) {
+SocketInfo::SocketInfo(ServerSocketInfo *serverCtx) {
     sockaddr_in client_addr;
     int client_len = sizeof(client_addr);
-    this->fd  = accept(server->getListenFD(), (struct sockaddr *)&client_addr, (socklen_t *)&client_len);
+    this->serverCtx = serverCtx;
+    this->fd  = accept(serverCtx->getListenFD(), (struct sockaddr *)&client_addr, (socklen_t *)&client_len);
     if (this->fd == -1) {
         perror("Accept socket error");
     }
@@ -52,22 +53,23 @@ void * SocketInfo::read(void *params) {
     int bytes_read = recv(socket->fd, socket->buff, sizeof(socket->buff), 0);
       if(bytes_read>0) {
          std::string str(socket->buff, bytes_read);
-         Request req = Request::deserialize(str);
-         char *host =  (char *)req.getHeaderValue("Host").c_str(); //"devimages.apple.com";
-         int conn_fd = socket_connect(host, 80);
+         //Request req = Request::deserialize(str);
+         char *host =  socket->serverCtx->hostEndPoint;//"amssamples.streaming.mediaservices.windows.net";//(char *)req.getHeaderValue("Host").c_str(); //
+         int conn_fd = socket_connect(host, socket->serverCtx->hostEndPointPort);
          std::cout<<"Connected to host: "<<host<<std::endl;
         write(conn_fd, socket->buff, bytes_read);
         std::cout<<"Written to host: "<<host<<std::endl;
         int read_bytes = INT_MAX;
-        char buffer[1024] = {0};
+        char buffer[65535] = {0};
         do {
-            read_bytes = recv(conn_fd, buffer, 1024, 0);
+            read_bytes = recv(conn_fd, buffer, 65535, 0);
+          //  printf("%s \n", buffer);
             write(socket->fd, buffer,read_bytes);
-            bzero(buffer, 1024);
+            bzero(buffer, 65535);
         } while(read_bytes > 0);
         
-        shutdown(conn_fd, SHUT_RDWR); 
-	    close(conn_fd); 
+        // shutdown(conn_fd, SHUT_RDWR); 
+	    // close(conn_fd); 
      }
     //printf("Executed the task\n");
 }
@@ -81,11 +83,13 @@ SocketInfo::~SocketInfo() {
 
 //--------------------------------------------------------
 // -----------Server Part
-ServerSocketInfo::ServerSocketInfo(char *ip, int port) {
+ServerSocketInfo::ServerSocketInfo(char *ip, int port, char *hostEndPoint, short hostEndPointPort) {
     socket_listen_fd = 0;
     sockaddr_in serv_addr;
     this->port = port;
 
+    this->hostEndPoint = hostEndPoint;
+    this->hostEndPointPort = hostEndPointPort;
     if (((socket_listen_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)) {
         perror("ERROR opening socket");
         exit(1);

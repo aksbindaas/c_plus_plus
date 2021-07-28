@@ -1,9 +1,9 @@
 #include "proxyhandler.h"
 #include <iostream>
-#include "rawPacket.h"
-ProxyHandler::ProxyHandler(char *ip, short port) {
-    pool = new ThreadPool(100);
-    socketInfo = new ServerSocketInfo(ip, port);
+
+ProxyHandler::ProxyHandler(char *ip, short port, char *hostEndPoint, short hostEndPointPort) {
+    pool = new ThreadPool(50);
+    socketInfo = new ServerSocketInfo(ip, port, hostEndPoint, hostEndPointPort);
     kq = kqueue();
     EV_SET(change_event, socketInfo->getListenFD(), EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
     if (kevent(kq, change_event, 1, NULL, 0, NULL) == -1) {
@@ -16,24 +16,24 @@ ProxyHandler::ProxyHandler(char *ip, short port) {
         exit(1);
     }
 
-    if (pthread_create(&rawDataHandle, nullptr, &ProxyHandler::rawPacket, this)) {
-        perror("ProxyHandler thread");
-        exit(1);
-    }
+    // if (pthread_create(&rawDataHandle, nullptr, &ProxyHandler::rawPacket, this)) {
+    //     perror("ProxyHandler thread");
+    //     exit(1);
+    // }
 }
 
 ProxyHandler::~ProxyHandler() {
 
     pthread_join(proxyHandle, nullptr);
-    pthread_join(rawDataHandle, nullptr);
+    //pthread_join(rawDataHandle, nullptr);
     delete pool;
     delete socketInfo;
 }
 
-void *ProxyHandler::rawPacket(void *args) {
-    ProxyHandler *handler = static_cast<ProxyHandler*>(args);
-    handler->pool->doWork(&Sniffer::sniffer, nullptr);
-}
+// void *ProxyHandler::rawPacket(void *args) {
+//     ProxyHandler *handler = static_cast<ProxyHandler*>(args);
+//     handler->pool->doWork(&Sniffer::sniffer, nullptr);
+// }
 
 void *ProxyHandler::connectionHandler(void *args) {
     ProxyHandler *handler = static_cast<ProxyHandler*>(args);

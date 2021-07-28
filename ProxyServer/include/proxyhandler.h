@@ -15,12 +15,12 @@ public:
     std::map<int, SocketInfo *> fdList;
     int kq;
     pthread_t proxyHandle;
-    pthread_t rawDataHandle;
+    //pthread_t rawDataHandle;
     struct kevent change_event[4];
 public:
-    ProxyHandler(char *ip, short port);
+    ProxyHandler(char *ip, short port, char *hostEndPoint, short hostEndPointPort);
     ~ProxyHandler ();
-    static void *rawPacket(void *args);
+    //static void *rawPacket(void *args);
     static void *connectionHandler(void *args);
 
 };
