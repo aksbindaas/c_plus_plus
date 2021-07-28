@@ -1,0 +1,14 @@
+prefix=./ffmpeg_1.0_static_dbg
+exec_prefix=${prefix}
+libdir=./ffmpeg_1.0_static_dbg/lib
+includedir=./ffmpeg_1.0_static_dbg/include
+
+Name: libswresample
+Description: FFmpeg audio resampling library
+Version: 4.0.100
+Requires: libavutil >= 57.0.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lswresample -lm
+Libs.private: 
+Cflags: -I${includedir}

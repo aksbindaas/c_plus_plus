@@ -1,0 +1,14 @@
+prefix=./ffmpeg_1.0_static_dbg
+exec_prefix=${prefix}
+libdir=./ffmpeg_1.0_static_dbg/lib
+includedir=./ffmpeg_1.0_static_dbg/include
+
+Name: libavfilter
+Description: FFmpeg audio/video filtering library
+Version: 8.0.103
+Requires: libswscale >= 6.0.100, libavformat >= 59.4.100, libavcodec >= 59.3.101, libswresample >= 4.0.100, libavutil >= 57.0.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavfilter -framework OpenGL -framework OpenGL -pthread -lm -framework CoreImage -framework AppKit
+Libs.private: 
+Cflags: -I${includedir}

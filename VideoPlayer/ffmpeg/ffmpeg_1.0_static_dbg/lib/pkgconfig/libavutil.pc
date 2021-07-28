@@ -1,0 +1,14 @@
+prefix=./ffmpeg_1.0_static_dbg
+exec_prefix=${prefix}
+libdir=./ffmpeg_1.0_static_dbg/lib
+includedir=./ffmpeg_1.0_static_dbg/include
+
+Name: libavutil
+Description: FFmpeg utility library
+Version: 57.0.100
+Requires: 
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavutil -pthread -lm -framework VideoToolbox -framework CoreFoundation -framework CoreMedia -framework CoreVideo -framework CoreServices
+Libs.private: 
+Cflags: -I${includedir}

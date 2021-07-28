@@ -1,0 +1,14 @@
+prefix=./ffmpeg_1.0_static_dbg
+exec_prefix=${prefix}
+libdir=./ffmpeg_1.0_static_dbg/lib
+includedir=./ffmpeg_1.0_static_dbg/include
+
+Name: libavcodec
+Description: FFmpeg codec library
+Version: 59.3.101
+Requires: libswresample >= 4.0.100, libavutil >= 57.0.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavcodec -lm -llzma -L/opt/local/lib -lz -framework AudioToolbox -pthread -framework VideoToolbox -framework CoreFoundation -framework CoreMedia -framework CoreVideo -framework CoreServices
+Libs.private: 
+Cflags: -I${includedir}
